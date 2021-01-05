@@ -23,11 +23,20 @@
 @brief Implementation of the ACI transport layer module
 */
 
+#ifndef __arm__
 #include <SPI.h>
+#endif
+#include <stdbool.h>
+#if INCLUDE_DEBUG_STATEMENTS
+#include <debug.h>
+#endif
+#include "spi.h"
 #include "hal_platform.h"
 #include "hal_aci_tl.h"
 #include "aci_queue.h"
-#if ( !defined(__SAM3X8E__) && !defined(__PIC32MX__) )
+#include "io_support.h"
+
+#if ( !defined(__SAM3X8E__) && !defined(__PIC32MX__) && !defined(__arm__))
 #include <avr/sleep.h>
 #endif
 /*
@@ -66,6 +75,7 @@ void m_aci_data_print(hal_aci_data_t *p_data)
 {
   const uint8_t length = p_data->buffer[0];
   uint8_t i;
+#ifndef __arm__
   Serial.print(length, DEC);
   Serial.print(" :");
   for (i=0; i<=length; i++)
@@ -74,8 +84,10 @@ void m_aci_data_print(hal_aci_data_t *p_data)
     Serial.print(F(", "));
   }
   Serial.println(F(""));
+#endif
 }
 
+#ifndef __arm__
 /*
   Interrupt service routine called when the RDYN line goes low. Runs the SPI transfer.
 */
@@ -121,6 +133,7 @@ static void m_aci_isr(void)
 
   return;
 }
+#endif
 
 /*
   Checks the RDYN line and runs the SPI transfer if required.
@@ -150,12 +163,18 @@ static void m_aci_event_check(void)
   // Receive from queue
   if (!aci_queue_dequeue(&aci_tx_q, &data_to_send))
   {
+#if INCLUDE_DEBUG_STATEMENTS
+    log_info("aci_queue_dequeue returned empty queue\r\n");
+#endif
     /* queue was empty, nothing to send */
     data_to_send.status_byte = 0;
     data_to_send.buffer[0] = 0;
   }
 
   // Receive and/or transmit data
+#if INCLUDE_DEBUG_STATEMENTS
+  //log_info("m_aci_spi_transfer invoked control loop\r\n");
+#endif
   m_aci_spi_transfer(&data_to_send, &received_data);
 
   /* If there are messages to transmit, and we can store the reply, we request a new transfer */
@@ -202,11 +221,15 @@ static inline void m_aci_reqn_enable (void)
 
 static void m_aci_q_flush(void)
 {
+#ifndef __arm__
   noInterrupts();
+#endif
   /* re-initialize aci cmd queue and aci event queue to flush them*/
   aci_queue_init(&aci_tx_q);
   aci_queue_init(&aci_rx_q);
+#ifndef __arm__
   interrupts();
+#endif
 }
 
 static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * received_data)
@@ -216,6 +239,11 @@ static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * r
   uint8_t max_bytes;
 
   m_aci_reqn_enable();
+
+#if INCLUDE_DEBUG_STATEMENTS
+  printf("data_to_send->buffer[0] = %02x\r\n", data_to_send->buffer[0]);
+  printf("data_to_send->buffer[1] = %02x\r\n", data_to_send->buffer[1]);
+#endif
 
   // Send length, receive header
   byte_sent_cnt = 0;
@@ -239,11 +267,20 @@ static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * r
     max_bytes = HAL_ACI_MAX_LENGTH;
   }
 
+#if INCLUDE_DEBUG_STATEMENTS
+  //printf("m_aci_spi_transfer, max_bytes = %d\r\n", max_bytes);
+#endif
   // Transmit/receive the rest of the packet
   for (byte_cnt = 0; byte_cnt < max_bytes; byte_cnt++)
   {
+#if INCLUDE_DEBUG_STATEMENTS
+    //printf("%x:", data_to_send->buffer[byte_sent_cnt]);
+#endif
     received_data->buffer[byte_cnt+1] =  spi_readwrite(data_to_send->buffer[byte_sent_cnt++]);
   }
+#if INCLUDE_DEBUG_STATEMENTS
+  //printf("\r\n");
+#endif
 
   // RDYN should follow the REQN line in approx 100ns
   m_aci_reqn_disable();
@@ -273,6 +310,9 @@ void hal_aci_tl_pin_reset(void)
         }
         else
         {
+#if INCLUDE_DEBUG_STATEMENTS
+            log_info("attempting reset toggle\r\n");
+#endif
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
             digitalWrite(a_pins_local_ptr->reset_pin, 0);
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
@@ -282,10 +322,15 @@ void hal_aci_tl_pin_reset(void)
 
 bool hal_aci_tl_event_peek(hal_aci_data_t *p_aci_data)
 {
+#ifdef __arm__
+  m_aci_event_check();
+#else
   if (!a_pins_local_ptr->interface_is_interrupt)
   {
     m_aci_event_check();
   }
+#endif
+
 
   if (aci_queue_peek(&aci_rx_q, p_aci_data))
   {
@@ -299,10 +344,17 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
 {
   bool was_full;
 
+#ifdef __arm__
+  if (!aci_queue_is_full(&aci_rx_q))
+  {
+    m_aci_event_check();
+  }
+#else
   if (!a_pins_local_ptr->interface_is_interrupt && !aci_queue_is_full(&aci_rx_q))
   {
     m_aci_event_check();
   }
+#endif
 
   was_full = aci_queue_is_full(&aci_rx_q);
 
@@ -310,15 +362,19 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
   {
     if (aci_debug_print)
     {
+#ifndef __arm__
       Serial.print(" E");
+#endif
       m_aci_data_print(p_aci_data);
     }
 
+#ifndef __arm__
     if (was_full && a_pins_local_ptr->interface_is_interrupt)
 	  {
       /* Enable RDY line interrupt again */
       attachInterrupt(a_pins_local_ptr->interrupt_number, m_aci_isr, LOW);
     }
+#endif
 
     /* Attempt to pull REQN LOW since we've made room for new messages */
     if (!aci_queue_is_full(&aci_rx_q) && !aci_queue_is_empty(&aci_tx_q))
@@ -346,6 +402,8 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
 
   The SPI library assumes that the hardware pins are used
   */
+
+#ifndef __arm__
   SPI.begin();
   //Board dependent defines
   #if defined (__AVR__)
@@ -357,6 +415,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   #endif
   SPI.setClockDivider(a_pins->spi_clock_divider);
   SPI.setDataMode(SPI_MODE0);
+#endif
 
   /* Initialize the ACI Command queue. This must be called after the delay above. */
   aci_queue_init(&aci_tx_q);
@@ -374,19 +433,25 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   hal_aci_tl_pin_reset();
 
   /* Set the nRF8001 to a known state as required by the datasheet*/
+
+#ifndef __arm__
   digitalWrite(a_pins->miso_pin, 0);
   digitalWrite(a_pins->mosi_pin, 0);
   digitalWrite(a_pins->reqn_pin, 1);
   digitalWrite(a_pins->sck_pin,  0);
+#endif
+  digitalWrite(a_pins->reqn_pin, 1);
 
   delay(30); //Wait for the nRF8001 to get hold of its lines - the lines float for a few ms after the reset
 
   /* Attach the interrupt to the RDYN line as requested by the caller */
+#ifndef __arm__
   if (a_pins->interface_is_interrupt)
   {
     // We use the LOW level of the RDYN line as the atmega328 can wakeup from sleep only on LOW
     attachInterrupt(a_pins->interrupt_number, m_aci_isr, LOW);
   }
+#endif
 }
 
 bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
@@ -410,7 +475,9 @@ bool hal_aci_tl_send(hal_aci_data_t *p_aci_cmd)
 
     if (aci_debug_print)
     {
+#ifndef __arm__
       Serial.print("C"); //ACI Command
+#endif
       m_aci_data_print(p_aci_cmd);
     }
   }
@@ -422,13 +489,21 @@ static uint8_t spi_readwrite(const uint8_t aci_byte)
 {
 	//Board dependent defines
 #if defined (__AVR__)
-    //For Arduino the transmission does not have to be reversed
-    return SPI.transfer(aci_byte);
+  //For Arduino the transmission does not have to be reversed
+  return SPI.transfer(aci_byte);
 #elif defined(__PIC32MX__)
-    //For ChipKit the transmission has to be reversed
-    uint8_t tmp_bits;
-    tmp_bits = SPI.transfer(REVERSE_BITS(aci_byte));
+  //For ChipKit the transmission has to be reversed
+  uint8_t tmp_bits;
+  tmp_bits = SPI.transfer(REVERSE_BITS(aci_byte));
 	return REVERSE_BITS(tmp_bits);
+#elif defined(__arm__)
+  uint8_t send_byte = aci_byte;
+  uint8_t ret_byte;
+  transmit_SPI(NRF8001_SPI, (uint8_t *) &send_byte, &ret_byte, 1);
+#if INCLUDE_DEBUG_STATEMENTS
+  //log_info("transmit_SPI with write = %x, read = %x\r\n", send_byte, ret_byte);
+#endif
+    return ret_byte;
 #endif
 }
 
