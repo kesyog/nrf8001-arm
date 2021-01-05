@@ -51,6 +51,13 @@
 #ifndef ACI_H__
 #define ACI_H__
 
+#if INCLUDE_DEBUG_STATEMENTS
+#include <stdio.h>
+#endif
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+ 
 /**
  * Define an _aci_packed_ macro we can use in structure and enumerated type
  * declarations so that the types are sized consistently across different
@@ -72,6 +79,7 @@
 #  endif
 #else
 #  define _aci_packed_
+#  error "Ensure packing is implemented properly"
 #endif
 
 /*

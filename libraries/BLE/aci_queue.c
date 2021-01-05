@@ -23,6 +23,10 @@
 @brief Implementation of a circular queue for ACI data
 */
 
+#include <stdbool.h>
+#if INCLUDE_DEBUG_STATEMENTS
+#include <debug.h>
+#endif
 #include "hal_aci_tl.h"
 #include "aci_queue.h"
 #include "ble_assert.h"
@@ -58,6 +62,7 @@ bool aci_queue_dequeue(aci_queue_t *aci_q, hal_aci_data_t *p_data)
   return true;
 }
 
+#ifndef __arm__
 bool aci_queue_dequeue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 {
   ble_assert(NULL != aci_q);
@@ -73,6 +78,7 @@ bool aci_queue_dequeue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 
   return true;
 }
+#endif
 
 bool aci_queue_enqueue(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 {
@@ -81,6 +87,16 @@ bool aci_queue_enqueue(aci_queue_t *aci_q, hal_aci_data_t *p_data)
   ble_assert(NULL != aci_q);
   ble_assert(NULL != p_data);
 
+#if INCLUDE_DEBUG_STATEMENTS
+  log_info("aci_queue_enqueue\r\n");
+  log_info("length = p_data->buffer[0] = ");
+
+  for (int i = 1; i < (length + 1); i++) {
+      printf("%02x:", p_data->buffer[i]);
+  }
+  printf("\r\n");
+#endif
+  
   if (aci_queue_is_full(aci_q))
   {
     return false;
@@ -93,6 +109,7 @@ bool aci_queue_enqueue(aci_queue_t *aci_q, hal_aci_data_t *p_data)
   return true;
 }
 
+#ifndef __arm__
 bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 {
   const uint8_t length = p_data->buffer[0];
@@ -111,6 +128,7 @@ bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 
   return true;
 }
+#endif // #ifndef __arm__
 
 bool aci_queue_is_empty(aci_queue_t *aci_q)
 {
@@ -119,22 +137,28 @@ bool aci_queue_is_empty(aci_queue_t *aci_q)
   ble_assert(NULL != aci_q);
 
   //Critical section
+#ifndef __arm__
   noInterrupts();
+#endif
   if (aci_q->head == aci_q->tail)
   {
     state = true;
   }
+#ifndef __arm__
   interrupts();
+#endif
 
   return state;
 }
 
+#ifndef __arm__
 bool aci_queue_is_empty_from_isr(aci_queue_t *aci_q)
 {
   ble_assert(NULL != aci_q);
 
   return aci_q->head == aci_q->tail;
 }
+#endif
 
 bool aci_queue_is_full(aci_queue_t *aci_q)
 {
@@ -143,22 +167,28 @@ bool aci_queue_is_full(aci_queue_t *aci_q)
   ble_assert(NULL != aci_q);
 
   //This should be done in a critical section
+#ifndef __arm__
   noInterrupts();
+#endif
   
   state = (aci_q->tail == aci_q->head + ACI_QUEUE_SIZE);
 
+#ifndef __arm__
   interrupts();
+#endif
   //end
 
   return state;
 }
 
+#ifndef __arm__
 bool aci_queue_is_full_from_isr(aci_queue_t *aci_q)
 {
   ble_assert(NULL != aci_q);
 
   return (aci_q->tail == aci_q->head + ACI_QUEUE_SIZE);
 }
+#endif
 
 bool aci_queue_peek(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 {
@@ -175,6 +205,7 @@ bool aci_queue_peek(aci_queue_t *aci_q, hal_aci_data_t *p_data)
   return true;
 }
 
+#ifndef __arm__
 bool aci_queue_peek_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 {
   ble_assert(NULL != aci_q);
@@ -189,3 +220,4 @@ bool aci_queue_peek_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 
   return true;
 }
+#endif

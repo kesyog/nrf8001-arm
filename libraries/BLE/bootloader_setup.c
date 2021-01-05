@@ -1,5 +1,7 @@
+#ifndef __arm__
 #include <avr/wdt.h>
 #include <EEPROM.h>
+#endif
 #include "bootloader_setup.h"
 
 /* This variable is put in .noinit which means it is not initialized

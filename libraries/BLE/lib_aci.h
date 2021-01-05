@@ -26,6 +26,10 @@
 * @brief ACI library
 */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
 /** @addtogroup lib_aci
 @{
 @brief Library for the logical part of the Application Controller Interface (ACI)
