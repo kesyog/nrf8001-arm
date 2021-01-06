@@ -20,6 +20,7 @@
  */
 
 #include <stdbool.h>
+#include <stddef.h>
 #if INCLUDE_DEBUG_STATEMENTS
 #include <debug.h>
 #endif

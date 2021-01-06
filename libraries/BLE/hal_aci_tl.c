@@ -30,7 +30,6 @@
 #if INCLUDE_DEBUG_STATEMENTS
 #include <debug.h>
 #endif
-#include "spi.h"
 #include "hal_platform.h"
 #include "hal_aci_tl.h"
 #include "aci_queue.h"
@@ -498,9 +497,8 @@ static uint8_t spi_readwrite(const uint8_t aci_byte)
   tmp_bits = SPI.transfer(REVERSE_BITS(aci_byte));
 	return REVERSE_BITS(tmp_bits);
 #elif defined(__arm__)
-  uint8_t send_byte = aci_byte;
-  uint8_t ret_byte;
-  transmit_SPI(NRF8001_SPI, (uint8_t *) &send_byte, &ret_byte, 1);
+  uint8_t ret_byte = 0;
+  transmit_SPI_byte(aci_byte, &ret_byte);
 #if INCLUDE_DEBUG_STATEMENTS
   //log_info("transmit_SPI with write = %x, read = %x\r\n", send_byte, ret_byte);
 #endif
