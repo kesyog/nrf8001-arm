@@ -5,8 +5,8 @@
  */
 
 #if INCLUDE_DEBUG_STATEMENTS
-#include <debug.h>
 #include <stdio.h>
+#include "debug.h"
 #endif
 #include <stdlib.h>
 #include <stdbool.h>

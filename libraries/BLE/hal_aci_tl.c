@@ -55,7 +55,9 @@ The outgoing command and the incoming event needs to be converted
 
 static void m_aci_data_print(hal_aci_data_t *p_data);
 static void m_aci_event_check(void);
+#ifndef __arm__
 static void m_aci_isr(void);
+#endif
 static void m_aci_pins_set(aci_pins_t *a_pins_ptr);
 static inline void m_aci_reqn_disable (void);
 static inline void m_aci_reqn_enable (void);
@@ -73,12 +75,11 @@ static aci_pins_t	 *a_pins_local_ptr;
 
 void m_aci_data_print(hal_aci_data_t *p_data)
 {
-  const uint8_t length = p_data->buffer[0];
-  uint8_t i;
 #ifndef __arm__
+  const uint8_t length = p_data->buffer[0];
   Serial.print(length, DEC);
   Serial.print(" :");
-  for (i=0; i<=length; i++)
+  for (uint8_t i=0; i<=length; i++)
   {
     Serial.print(p_data->buffer[i], HEX);
     Serial.print(F(", "));
@@ -342,8 +343,6 @@ bool hal_aci_tl_event_peek(hal_aci_data_t *p_aci_data)
 
 bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
 {
-  bool was_full;
-
 #ifdef __arm__
   if (!aci_queue_is_full(&aci_rx_q))
   {
@@ -356,7 +355,9 @@ bool hal_aci_tl_event_get(hal_aci_data_t *p_aci_data)
   }
 #endif
 
-  was_full = aci_queue_is_full(&aci_rx_q);
+#ifndef __arm__
+  bool was_full = aci_queue_is_full(&aci_rx_q);
+#endif
 
   if (aci_queue_dequeue(&aci_rx_q, p_aci_data))
   {
