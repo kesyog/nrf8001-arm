@@ -12,7 +12,7 @@ AS=arm-none-eabi-as
 CP=arm-none-eabi-objcopy
 OD=arm-none-eabi-objdump
 
-DEFS = -DUSE_STDPERIPH_DRIVER -DSTM32F4XX -DHSE_VALUE=8000000 -DSTM32F40_41xxx
+DEFS =
 
 MCU = cortex-m4
 MCFLAGS = -mcpu=$(MCU) -mthumb -mlittle-endian -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb-interwork -std=c99
@@ -37,7 +37,7 @@ SRC = \
 	./libraries/BLE/hal_aci_tl.c \
 	./libraries/BLE/lib_aci.c \
 
-CFLAGS	= $(MCFLAGS)  $(OPTIMIZE)  $(DEFS)  -Wall -lc -lm -lnosys
+CFLAGS	= $(MCFLAGS)  $(OPTIMIZE)  $(DEFS)  -Wall
 AFLAGS	= rcs
 #-mapcs-float use float regs. small increase in code size
 
