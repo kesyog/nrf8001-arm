@@ -37,7 +37,7 @@ SRC = \
 	./libraries/BLE/hal_aci_tl.c \
 	./libraries/BLE/lib_aci.c \
 
-CFLAGS	= $(MCFLAGS)  $(OPTIMIZE)  $(DEFS)  -Wall
+CFLAGS	= $(MCFLAGS)  $(OPTIMIZE)  $(DEFS)  -Wall -fPIE
 AFLAGS	= rcs
 #-mapcs-float use float regs. small increase in code size
 
