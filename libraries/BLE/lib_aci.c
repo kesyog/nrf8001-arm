@@ -26,9 +26,10 @@
 #if INCLUDE_DEBUG_STATEMENTS
 #include <stdio.h>
 #endif
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <string.h>
 #include <io_support.h>
 #include "hal_platform.h"
 #include "aci.h"

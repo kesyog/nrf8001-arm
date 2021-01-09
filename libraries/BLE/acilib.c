@@ -31,8 +31,9 @@
 #if INCLUDE_DEBUG_STATEMENTS
 #include <stdio.h>
 #endif
-#include <stdlib.h>
+#include <stddef.h>
 #include <stdbool.h>
+#include <string.h>
 #include "hal_platform.h"
 #include "aci.h"
 #include "aci_cmds.h"

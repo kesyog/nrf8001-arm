@@ -27,10 +27,6 @@
 */
 
 #include <stdbool.h>
-#if INCLUDE_DEBUG_STATEMENTS
-#include <stdio.h>
-#endif
-#include <stdlib.h>
 #include <stdint.h>
 
 /** @addtogroup lib_aci

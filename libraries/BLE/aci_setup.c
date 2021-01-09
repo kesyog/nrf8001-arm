@@ -21,6 +21,7 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 #if INCLUDE_DEBUG_STATEMENTS
 #include <debug.h>
 #endif
