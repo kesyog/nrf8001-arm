@@ -1,0 +1,16 @@
+[package]
+name = "nrf8001-sys"
+version = "0.1.0"
+authors = ["Kesavan Yogeswaran <kesyog@gmail.com>"]
+edition = "2018"
+links = "nrf8001"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cty = "^0.2.1"
+
+
+[build-dependencies]
+cc = {version = "^1.0.66", features = ["parallel"]}
+bindgen = "^0.56.0"

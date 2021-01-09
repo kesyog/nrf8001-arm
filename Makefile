@@ -1,6 +1,6 @@
 ROOT_DIR = .
 BUILDDIR = ./_build
-TARGET=$(BUILDDIR)/nrf8001.a
+TARGET=$(BUILDDIR)/libnrf8001.a
 
 MKDIR=mkdir -p
 ECHO=echo
