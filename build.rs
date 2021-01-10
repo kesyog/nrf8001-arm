@@ -40,7 +40,7 @@ fn main() {
         // Tell cargo to invalidate the built crate whenever any of the
         // included header files changed.
         .parse_callbacks(Box::new(bindgen::CargoCallbacks))
-        // Don't use std types
+        // Required for no_std
         .use_core()
         .ctypes_prefix("cty")
         .clang_arg("-D__arm__")
@@ -48,9 +48,13 @@ fn main() {
         // maybe: single source of truth for include paths between cc and bindgen
         .clang_arg("-Isrc")
         .clang_arg(["-I", BLE_LIBRARY_PATH].join(""))
-        // Whitelist functions
+        // Use a whitelist to prevent the interface from ballooning in size
         .whitelist_function("do_aci_setup")
         .whitelist_function("lib_aci.*")
+        .derive_default(true)
+        .derive_copy(true)
+        .derive_debug(true)
+        .rustfmt_bindings(true)
         // Finish the builder and generate the bindings.
         .generate()
         // Unwrap the Result and panic on failure.
