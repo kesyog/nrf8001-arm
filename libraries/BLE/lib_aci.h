@@ -496,7 +496,7 @@ bool lib_aci_set_key(aci_key_type_t key_rsp_type, uint8_t *key, uint8_t len);
  *  @param message_data Pointer to the data to send.
  *  @return True if the transaction is successfully initiated.
 */
-bool lib_aci_echo_msg(uint8_t message_size, uint8_t *message_data);
+bool lib_aci_echo_msg(uint8_t message_size, const uint8_t *message_data);
 
 /** @brief Sends an DTM command
  *  @details This function sends an @c DTM command to the radio. 

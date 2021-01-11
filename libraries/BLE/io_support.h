@@ -24,8 +24,8 @@ typedef enum {
 
 void delay(uint16_t delay);
 bool digitalRead(uint8_t pin);
-void digitalWrite(eGpioPin pin, bool value);
-void pinMode(eGpioPin pin, eGpioPinMode mode);
+void digitalWrite(uint8_t pin, bool value);
+void pinMode(uint8_t pin, eGpioPinMode mode);
 bool transmit_SPI_byte(uint8_t txbuf, uint8_t *rxbuf);
 
 #endif

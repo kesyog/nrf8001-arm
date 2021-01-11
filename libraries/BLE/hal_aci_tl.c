@@ -297,7 +297,9 @@ void hal_aci_tl_pin_reset(void)
 {
     if (UNUSED != a_pins_local_ptr->reset_pin)
     {
+#ifndef __arm__
         pinMode(a_pins_local_ptr->reset_pin, kpin_mode_output);
+#endif
 
         if ((REDBEARLAB_SHIELD_V1_1     == a_pins_local_ptr->board_name) ||
             (REDBEARLAB_SHIELD_V2012_07 == a_pins_local_ptr->board_name))
@@ -422,6 +424,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   aci_queue_init(&aci_rx_q);
 
   //Configure the IO lines
+#ifndef __arm__
   pinMode(a_pins->rdyn_pin,		kpin_mode_input_pullup);
   pinMode(a_pins->reqn_pin,		kpin_mode_output);
 
@@ -429,6 +432,7 @@ void hal_aci_tl_init(aci_pins_t *a_pins, bool debug)
   {
     pinMode(a_pins->active_pin,	kpin_mode_input);
   }
+#endif
   /* Pin reset the nRF8001, required when the nRF8001 setup is being changed */
   hal_aci_tl_pin_reset();
 

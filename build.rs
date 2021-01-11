@@ -22,8 +22,6 @@ fn main() {
         .flag("-mfloat-abi=hard")
         .flag("-mthumb-interwork")
         .flag("-std=c99")
-        .flag("-fPIE")
-        .pic(true)
         .warnings(false)
         .extra_warnings(false)
         // TODO: Don't hard-code the compiler so that tests work
@@ -50,7 +48,9 @@ fn main() {
         .clang_arg(["-I", BLE_LIBRARY_PATH].join(""))
         // Use a whitelist to prevent the interface from ballooning in size
         .whitelist_function("do_aci_setup")
+        .whitelist_function("hal_aci_tl_init")
         .whitelist_function("lib_aci.*")
+        .whitelist_type("eGpioPinMode")
         .derive_default(true)
         .derive_copy(true)
         .derive_debug(true)

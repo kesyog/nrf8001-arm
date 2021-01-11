@@ -537,7 +537,7 @@ bool lib_aci_set_key(aci_key_type_t key_rsp_type, uint8_t *key, uint8_t len)
 }
 
 
-bool lib_aci_echo_msg(uint8_t msg_size, uint8_t *p_msg_data)
+bool lib_aci_echo_msg(uint8_t msg_size, const uint8_t *p_msg_data)
 {
   aci_cmd_params_echo_t aci_cmd_params_echo;
   if(msg_size > (ACI_ECHO_DATA_MAX_LEN))
