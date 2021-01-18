@@ -1,3 +1,4 @@
+#include "aci_cmds.h"
 #include "aci_setup.h"
 #include "hal_aci_tl.h"
 #include "io_support.h"

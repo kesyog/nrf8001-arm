@@ -51,6 +51,7 @@ fn main() {
         .whitelist_function("hal_aci_tl_init")
         .whitelist_function("lib_aci.*")
         .whitelist_type("eGpioPinMode")
+        .whitelist_type("aci_cmd_t")
         .derive_default(true)
         .derive_copy(true)
         .derive_debug(true)
