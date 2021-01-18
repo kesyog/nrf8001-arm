@@ -18,19 +18,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
- 
+
+
 #ifndef H_ACI_SETUP
 #define H_ACI_SETUP
 
 #include "lib_aci.h"
 
-#define SETUP_SUCCESS                        0
-#define SETUP_FAIL_COMMAND_QUEUE_NOT_EMPTY   1
-#define SETUP_FAIL_EVENT_QUEUE_NOT_EMPTY     2
-#define SETUP_FAIL_TIMEOUT                   3
-#define SETUP_FAIL_NOT_SETUP_EVENT           4
-#define SETUP_FAIL_NOT_COMMAND_RESPONSE      5
+typedef enum {
+  SETUP_SUCCESS,
+  SETUP_FAIL_COMMAND_QUEUE_NOT_EMPTY,
+  SETUP_FAIL_EVENT_QUEUE_NOT_EMPTY,
+  SETUP_FAIL_TIMEOUT,
+  SETUP_FAIL_NOT_SETUP_EVENT,
+  SETUP_FAIL_NOT_COMMAND_RESPONSE,
+} aci_setup_return_t;
 
 /** @brief Setup the nRF8001 device
  *  @details
@@ -41,6 +43,6 @@
  *  otherwise.
  *  @returns An integer indicating the reason the function terminated
  */
-uint8_t do_aci_setup(aci_state_t *aci_stat);
+aci_setup_return_t do_aci_setup(aci_state_t *aci_stat);
 
 #endif
