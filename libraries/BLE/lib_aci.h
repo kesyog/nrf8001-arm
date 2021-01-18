@@ -56,7 +56,7 @@ ACI_ASSERT_SIZE(hal_aci_evt_t, 34);
 
 typedef struct
 {
-  uint8_t  location; /**< enum aci_pipe_store_t */
+  aci_pipe_store_t  location;
   aci_pipe_type_t   pipe_type;
 } services_pipe_type_mapping_t;
 
