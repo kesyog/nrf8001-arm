@@ -81,7 +81,7 @@ bool aci_queue_dequeue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 }
 #endif
 
-bool aci_queue_enqueue(aci_queue_t *aci_q, hal_aci_data_t *p_data)
+bool aci_queue_enqueue(aci_queue_t *aci_q, const hal_aci_data_t *p_data)
 {
   const uint8_t length = p_data->buffer[0];
 
@@ -111,7 +111,7 @@ bool aci_queue_enqueue(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 }
 
 #ifndef __arm__
-bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
+bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, const hal_aci_data_t *p_data)
 {
   const uint8_t length = p_data->buffer[0];
 
@@ -131,7 +131,7 @@ bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data)
 }
 #endif // #ifndef __arm__
 
-bool aci_queue_is_empty(aci_queue_t *aci_q)
+bool aci_queue_is_empty(const aci_queue_t *aci_q)
 {
   bool state = false;
 
@@ -153,7 +153,7 @@ bool aci_queue_is_empty(aci_queue_t *aci_q)
 }
 
 #ifndef __arm__
-bool aci_queue_is_empty_from_isr(aci_queue_t *aci_q)
+bool aci_queue_is_empty_from_isr(const aci_queue_t *aci_q)
 {
   ble_assert(NULL != aci_q);
 
@@ -161,7 +161,7 @@ bool aci_queue_is_empty_from_isr(aci_queue_t *aci_q)
 }
 #endif
 
-bool aci_queue_is_full(aci_queue_t *aci_q)
+bool aci_queue_is_full(const aci_queue_t *aci_q)
 {
   bool state;
 
@@ -183,7 +183,7 @@ bool aci_queue_is_full(aci_queue_t *aci_q)
 }
 
 #ifndef __arm__
-bool aci_queue_is_full_from_isr(aci_queue_t *aci_q)
+bool aci_queue_is_full_from_isr(const aci_queue_t *aci_q)
 {
   ble_assert(NULL != aci_q);
 

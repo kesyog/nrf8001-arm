@@ -51,8 +51,8 @@ Global additionally used used in aci_setup
 hal_aci_data_t  msg_to_send;
 
 
-static services_pipe_type_mapping_t * p_services_pipe_type_map;
-static hal_aci_data_t *               p_setup_msgs;
+static const services_pipe_type_mapping_t * p_services_pipe_type_map;
+static const hal_aci_data_t *               p_setup_msgs;
 
 
 
@@ -75,7 +75,7 @@ static aci_cmd_params_open_adv_pipe_t aci_cmd_params_open_adv_pipe;
 extern aci_queue_t    aci_rx_q;
 extern aci_queue_t    aci_tx_q;
 
-bool lib_aci_is_pipe_available(aci_state_t *aci_stat, uint8_t pipe)
+bool lib_aci_is_pipe_available(const aci_state_t *aci_stat, uint8_t pipe)
 {
   uint8_t byte_idx;
 
@@ -88,7 +88,7 @@ bool lib_aci_is_pipe_available(aci_state_t *aci_stat, uint8_t pipe)
 }
 
 
-bool lib_aci_is_pipe_closed(aci_state_t *aci_stat, uint8_t pipe)
+bool lib_aci_is_pipe_closed(const aci_state_t *aci_stat, uint8_t pipe)
 {
   uint8_t byte_idx;
 
@@ -101,7 +101,7 @@ bool lib_aci_is_pipe_closed(aci_state_t *aci_stat, uint8_t pipe)
 }
 
 
-bool lib_aci_is_discovery_finished(aci_state_t *aci_stat)
+bool lib_aci_is_discovery_finished(const aci_state_t *aci_stat)
 {
   return(aci_stat->pipes_open_bitmap[0]&0x01);
 }
@@ -222,12 +222,12 @@ void lib_aci_init(aci_state_t *aci_stat, bool debug)
 }
 
 
-uint8_t lib_aci_get_nb_available_credits(aci_state_t *aci_stat)
+uint8_t lib_aci_get_nb_available_credits(const aci_state_t *aci_stat)
 {
   return aci_stat->data_credit_available;
 }
 
-uint16_t lib_aci_get_cx_interval_ms(aci_state_t *aci_stat)
+uint16_t lib_aci_get_cx_interval_ms(const aci_state_t *aci_stat)
 {
   uint32_t cx_rf_interval_ms_32bits;
   uint16_t cx_rf_interval_ms;
@@ -240,13 +240,13 @@ uint16_t lib_aci_get_cx_interval_ms(aci_state_t *aci_stat)
 }
 
 
-uint16_t lib_aci_get_cx_interval(aci_state_t *aci_stat)
+uint16_t lib_aci_get_cx_interval(const aci_state_t *aci_stat)
 {
   return aci_stat->connection_interval;
 }
 
 
-uint16_t lib_aci_get_slave_latency(aci_state_t *aci_stat)
+uint16_t lib_aci_get_slave_latency(const aci_state_t *aci_stat)
 {
   return aci_stat->slave_latency;
 }
@@ -301,7 +301,7 @@ bool lib_aci_device_version()
 }
 
 
-bool lib_aci_set_local_data(aci_state_t *aci_stat, uint8_t pipe, uint8_t *p_value, uint8_t size)
+bool lib_aci_set_local_data(const aci_state_t *aci_stat, uint8_t pipe, const uint8_t *p_value, uint8_t size)
 {
   aci_cmd_params_set_local_data_t aci_cmd_params_set_local_data;
   
@@ -400,7 +400,7 @@ bool lib_aci_get_battery_level()
 }
 
 
-bool lib_aci_send_data(uint8_t pipe, uint8_t *p_value, uint8_t size)
+bool lib_aci_send_data(uint8_t pipe, const uint8_t *p_value, uint8_t size)
 {
   bool ret_val = false;
   aci_cmd_params_send_data_t aci_cmd_params_send_data;
@@ -427,7 +427,7 @@ bool lib_aci_send_data(uint8_t pipe, uint8_t *p_value, uint8_t size)
 }
 
 
-bool lib_aci_request_data(aci_state_t *aci_stat, uint8_t pipe)
+bool lib_aci_request_data(const aci_state_t *aci_stat, uint8_t pipe)
 {
   bool ret_val = false;
   aci_cmd_params_request_data_t aci_cmd_params_request_data;
@@ -473,7 +473,7 @@ bool lib_aci_change_timing_GAP_PPCP()
 }
 
 
-bool lib_aci_open_remote_pipe(aci_state_t *aci_stat, uint8_t pipe)
+bool lib_aci_open_remote_pipe(const aci_state_t *aci_stat, uint8_t pipe)
 {
   bool ret_val = false;
   aci_cmd_params_open_remote_pipe_t aci_cmd_params_open_remote_pipe;
@@ -500,7 +500,7 @@ bool lib_aci_open_remote_pipe(aci_state_t *aci_stat, uint8_t pipe)
 }
 
 
-bool lib_aci_close_remote_pipe(aci_state_t *aci_stat, uint8_t pipe)
+bool lib_aci_close_remote_pipe(const aci_state_t *aci_stat, uint8_t pipe)
 {
   bool ret_val = false;
   aci_cmd_params_close_remote_pipe_t aci_cmd_params_close_remote_pipe;
@@ -527,7 +527,7 @@ bool lib_aci_close_remote_pipe(aci_state_t *aci_stat, uint8_t pipe)
 }
 
 
-bool lib_aci_set_key(aci_key_type_t key_rsp_type, uint8_t *key, uint8_t len)
+bool lib_aci_set_key(aci_key_type_t key_rsp_type, const uint8_t *key, uint8_t len)
 {
   aci_cmd_params_set_key_t aci_cmd_params_set_key;
   aci_cmd_params_set_key.key_type = key_rsp_type;
@@ -639,7 +639,7 @@ bool lib_aci_event_get(aci_state_t *aci_stat, hal_aci_evt_t *p_aci_evt_data)
 }
 
 
-bool lib_aci_send_ack(aci_state_t *aci_stat, const uint8_t pipe)
+bool lib_aci_send_ack(const aci_state_t *aci_stat, const uint8_t pipe)
 {
   bool ret_val = false;
   {
@@ -651,7 +651,7 @@ bool lib_aci_send_ack(aci_state_t *aci_stat, const uint8_t pipe)
 }
 
 
-bool lib_aci_send_nack(aci_state_t *aci_stat, const uint8_t pipe, const uint8_t error_code)
+bool lib_aci_send_nack(const aci_state_t *aci_stat, const uint8_t pipe, const uint8_t error_code)
 {
   bool ret_val = false;
   
@@ -716,7 +716,7 @@ bool lib_aci_read_dynamic_data()
 }
 
 
-bool lib_aci_write_dynamic_data(uint8_t sequence_number, uint8_t* dynamic_data, uint8_t length)
+bool lib_aci_write_dynamic_data(uint8_t sequence_number, const uint8_t* dynamic_data, uint8_t length)
 {
   acil_encode_cmd_write_dynamic_data(&(msg_to_send.buffer[0]), sequence_number, dynamic_data, length);
   return hal_aci_tl_send(&msg_to_send);

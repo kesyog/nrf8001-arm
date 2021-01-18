@@ -62,10 +62,10 @@ typedef struct
 
 typedef struct aci_setup_info_t
 {
-  services_pipe_type_mapping_t *services_pipe_type_mapping;
-  uint8_t                       number_of_pipes;
-  hal_aci_data_t               *setup_msgs;
-  uint8_t                       num_setup_msgs;
+  const services_pipe_type_mapping_t *services_pipe_type_mapping;
+  uint8_t                             number_of_pipes;
+  const hal_aci_data_t               *setup_msgs;
+  uint8_t                             num_setup_msgs;
 } aci_setup_info_t;
 
 
@@ -142,39 +142,39 @@ void lib_aci_init(aci_state_t *aci_stat, bool debug);
 /** @brief Gets the number of currently available ACI credits.
  *  @return Number of ACI credits.
  */
-uint8_t lib_aci_get_nb_available_credits(aci_state_t *aci_stat);
+uint8_t lib_aci_get_nb_available_credits(const aci_state_t *aci_stat);
 
 /** @brief Gets the connection interval in milliseconds.
  *  @return Connection interval in milliseconds.
  */
-uint16_t lib_aci_get_cx_interval_ms(aci_state_t *aci_stat);
+uint16_t lib_aci_get_cx_interval_ms(const aci_state_t *aci_stat);
 
 /** @brief Gets the connection interval in multiple of 1.25&nbsp;ms.
  *  @return Connection interval in multiple of 1.25&nbsp;ms.
  */
-uint16_t lib_aci_get_cx_interval(aci_state_t *aci_stat);
+uint16_t lib_aci_get_cx_interval(const aci_state_t *aci_stat);
 
 /** @brief Gets the current slave latency.
  *  @return Current slave latency.
  */
-uint16_t lib_aci_get_slave_latency(aci_state_t *aci_stat);
+uint16_t lib_aci_get_slave_latency(const aci_state_t *aci_stat);
 
 /** @brief Checks if a given pipe is available.
  *  @param pipe Pipe to check.
  *  @return True if the pipe is available, otherwise false.
  */
-bool lib_aci_is_pipe_available(aci_state_t *aci_stat, uint8_t pipe);
+bool lib_aci_is_pipe_available(const aci_state_t *aci_stat, uint8_t pipe);
 
 /** @brief Checks if a given pipe is closed.
  *  @param pipe Pipe to check.
  *  @return True if the pipe is closed, otherwise false.
  */
-bool lib_aci_is_pipe_closed(aci_state_t *aci_stat, uint8_t pipe);
+bool lib_aci_is_pipe_closed(const aci_state_t *aci_stat, uint8_t pipe);
 
 /** @brief Checks if the discovery operation is finished.
  *  @return True if the discovery is finished.
  */
-bool lib_aci_is_discovery_finished(aci_state_t *aci_stat);
+bool lib_aci_is_discovery_finished(const aci_state_t *aci_stat);
 
 
 
@@ -298,7 +298,7 @@ bool lib_aci_disconnect(aci_state_t *aci_stat, aci_disconnect_reason_t reason);
  *  @param size Size of the data to set.
  *  @return True if the transaction is successfully initiated.
 */
-bool lib_aci_set_local_data(aci_state_t *aci_stat, uint8_t pipe, uint8_t *value, uint8_t size);
+bool lib_aci_set_local_data(const aci_state_t *aci_stat, uint8_t pipe, const uint8_t *value, uint8_t size);
 
 /** @brief Sends Broadcast message to the radio.
  *  @details The Broadcast message starts advertisement procedure 
@@ -358,14 +358,14 @@ bool lib_aci_set_app_latency(uint16_t latency, aci_app_latency_mode_t latency_mo
  *  @param pipe Number of the pipe to open.
  *  @return True if the transaction is successfully initiated.
  */
-bool lib_aci_open_remote_pipe(aci_state_t *aci_stat, uint8_t pipe);
+bool lib_aci_open_remote_pipe(const aci_state_t *aci_stat, uint8_t pipe);
 
 /** @brief Closes a remote pipe.
  *  @details This function sends an @c CloseRemotePipe command.
  *  @param pipe Pipe number to close.
  *  @return True if the transaction is successfully initiated.
  */
-bool lib_aci_close_remote_pipe(aci_state_t *aci_stat, uint8_t pipe);
+bool lib_aci_close_remote_pipe(const aci_state_t *aci_stat, uint8_t pipe);
 
 /** @brief Sends data on a given pipe.
  *  @details This function sends a @c SendData command with application data to
@@ -376,7 +376,7 @@ bool lib_aci_close_remote_pipe(aci_state_t *aci_stat, uint8_t pipe);
  *  @param size Size of the data to send.
  *  @return True if the transaction is successfully initiated.
  */
-bool lib_aci_send_data(uint8_t pipe, uint8_t *value, uint8_t size);
+bool lib_aci_send_data(uint8_t pipe, const uint8_t *value, uint8_t size);
 
 /** @brief Requests data from a given pipe.
  *  @details This function sends a @c RequestData command to the radio. This
@@ -386,7 +386,7 @@ bool lib_aci_send_data(uint8_t pipe, uint8_t *value, uint8_t size);
  *  @param pipe Pipe number on which the data is requested.
  *  @return True if the transaction is successfully initiated.
  */
-bool lib_aci_request_data(aci_state_t *aci_stat, uint8_t pipe);
+bool lib_aci_request_data(const aci_state_t *aci_stat, uint8_t pipe);
 
 /** @brief Sends a L2CAP change connection parameters request.
  *  @details This function sends a @c ChangeTiming command to the radio.  This command triggers a "L2CAP change connection parameters" request 
@@ -423,7 +423,7 @@ bool lib_aci_change_timing_GAP_PPCP(void);
  *  @param pipe Pipe number for which the acknowledgement is to be sent.
  *  @return True if the ack was sent successfully. False otherwise.
 */
-bool lib_aci_send_ack(aci_state_t *aci_stat, const uint8_t pipe);
+bool lib_aci_send_ack(const aci_state_t *aci_stat, const uint8_t pipe);
 
 /** @brief Sends negative acknowledgement message to peer.
  *  @details This function sends @c SendDataNack command to radio. The radio is expected 
@@ -432,7 +432,7 @@ bool lib_aci_send_ack(aci_state_t *aci_stat, const uint8_t pipe);
  *  @param error_code Error code to be sent in the NACk.
  *  @return True if the nack was sent successfully. False otherwise.
 */
-bool lib_aci_send_nack(aci_state_t *aci_stat, const uint8_t pipe, const uint8_t error_code);
+bool lib_aci_send_nack(const aci_state_t *aci_stat, const uint8_t pipe, const uint8_t error_code);
 
 /** @brief Sends ReadDynamicData command to the host. 
  *  @details This function sends @c ReadDynamicData command to host. The host is expected 
@@ -459,7 +459,7 @@ bool lib_aci_read_dynamic_data(void);
  *  @param length Length of the dynamic data.
  *  @return True if the command was sent successfully through the ACI. False otherwise.
 */
-bool lib_aci_write_dynamic_data(uint8_t sequence_number, uint8_t* dynamic_data, uint8_t length);
+bool lib_aci_write_dynamic_data(uint8_t sequence_number, const uint8_t* dynamic_data, uint8_t length);
 //@}
 
 /** @name ACI commands available while connected in Bond mode */
@@ -480,7 +480,7 @@ bool lib_aci_bond_request(void);
  *  @param len Length of the key.
  *  @return True if the transaction is successfully initiated.
 */
-bool lib_aci_set_key(aci_key_type_t key_rsp_type, uint8_t *key, uint8_t len);
+bool lib_aci_set_key(aci_key_type_t key_rsp_type, const uint8_t *key, uint8_t len);
 
 //@}
 

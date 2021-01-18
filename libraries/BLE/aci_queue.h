@@ -60,14 +60,14 @@ void aci_queue_init(aci_queue_t *aci_q);
 bool aci_queue_dequeue(aci_queue_t *aci_q, hal_aci_data_t *p_data);
 bool aci_queue_dequeue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data);
 
-bool aci_queue_enqueue(aci_queue_t *aci_q, hal_aci_data_t *p_data);
-bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data);
+bool aci_queue_enqueue(aci_queue_t *aci_q, const hal_aci_data_t *p_data);
+bool aci_queue_enqueue_from_isr(aci_queue_t *aci_q, const hal_aci_data_t *p_data);
 
-bool aci_queue_is_empty(aci_queue_t *aci_q);
-bool aci_queue_is_empty_from_isr(aci_queue_t *aci_q);
+bool aci_queue_is_empty(const aci_queue_t *aci_q);
+bool aci_queue_is_empty_from_isr(const aci_queue_t *aci_q);
 
-bool aci_queue_is_full(aci_queue_t *aci_q);
-bool aci_queue_is_full_from_isr(aci_queue_t *aci_q);
+bool aci_queue_is_full(const aci_queue_t *aci_q);
+bool aci_queue_is_full_from_isr(const aci_queue_t *aci_q);
 
 bool aci_queue_peek(aci_queue_t *aci_q, hal_aci_data_t *p_data);
 bool aci_queue_peek_from_isr(aci_queue_t *aci_q, hal_aci_data_t *p_data);
