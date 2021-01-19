@@ -28,9 +28,6 @@
  */
 
 
-#if INCLUDE_DEBUG_STATEMENTS
-#include <stdio.h>
-#endif
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
@@ -224,12 +221,6 @@ void acil_encode_cmd_change_timing_req_GAP_PPCP(uint8_t *buffer)
 
 void acil_encode_cmd_setup(uint8_t *buffer, const aci_cmd_params_setup_t *p_aci_cmd_params_setup, uint8_t setup_data_size)
 {
-#if INCLUDE_DEBUG_STATEMENTS
-  printf("acil_encode_cmd_setup size = %d\r\n", setup_data_size + MSG_SETUP_CMD_BASE_LEN);
-  printf("acil_encode_cmd_setup opcode code = %x\r\n", ACI_CMD_SETUP);
-  printf("setup_data_size = %d\r\n", setup_data_size);
-#endif
-
   *(buffer + OFFSET_ACI_CMD_T_LEN) = setup_data_size + MSG_SETUP_CMD_BASE_LEN;
   *(buffer + OFFSET_ACI_CMD_T_CMD_OPCODE) = ACI_CMD_SETUP;
   memcpy((buffer + OFFSET_ACI_CMD_T_SETUP), &(p_aci_cmd_params_setup->setup_data[0]), setup_data_size);
@@ -312,10 +303,6 @@ void acil_encode_cmd_set_key(uint8_t *buffer, const aci_cmd_params_set_key_t *p_
 bool acil_encode_cmd(uint8_t *buffer, const aci_cmd_t *p_aci_cmd)
 {
   bool ret_val = false;
-
-#if INCLUDE_DEBUG_STATEMENTS
-  printf("acil_encode_cmd called\r\n");
-#endif
 
   switch(p_aci_cmd->cmd_opcode)
   {

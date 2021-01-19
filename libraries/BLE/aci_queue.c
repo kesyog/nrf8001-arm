@@ -25,9 +25,6 @@
 
 #include <stdbool.h>
 #include <string.h>
-#if INCLUDE_DEBUG_STATEMENTS
-#include <debug.h>
-#endif
 #include "hal_aci_tl.h"
 #include "aci_queue.h"
 #include "ble_assert.h"
@@ -88,16 +85,6 @@ bool aci_queue_enqueue(aci_queue_t *aci_q, const hal_aci_data_t *p_data)
   ble_assert(NULL != aci_q);
   ble_assert(NULL != p_data);
 
-#if INCLUDE_DEBUG_STATEMENTS
-  log_info("aci_queue_enqueue\r\n");
-  log_info("length = p_data->buffer[0] = ");
-
-  for (int i = 1; i < (length + 1); i++) {
-      printf("%02x:", p_data->buffer[i]);
-  }
-  printf("\r\n");
-#endif
-  
   if (aci_queue_is_full(aci_q))
   {
     return false;

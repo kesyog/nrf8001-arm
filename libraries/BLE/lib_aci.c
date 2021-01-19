@@ -23,9 +23,6 @@
   @brief Implementation of the ACI library.
  */
 
-#if INCLUDE_DEBUG_STATEMENTS
-#include <stdio.h>
-#endif
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>

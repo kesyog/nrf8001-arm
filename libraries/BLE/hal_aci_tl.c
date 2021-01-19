@@ -27,9 +27,6 @@
 #include <SPI.h>
 #endif
 #include <stdbool.h>
-#if INCLUDE_DEBUG_STATEMENTS
-#include <debug.h>
-#endif
 #include "hal_platform.h"
 #include "hal_aci_tl.h"
 #include "aci_queue.h"
@@ -163,18 +160,12 @@ static void m_aci_event_check(void)
   // Receive from queue
   if (!aci_queue_dequeue(&aci_tx_q, &data_to_send))
   {
-#if INCLUDE_DEBUG_STATEMENTS
-    log_info("aci_queue_dequeue returned empty queue\r\n");
-#endif
     /* queue was empty, nothing to send */
     data_to_send.status_byte = 0;
     data_to_send.buffer[0] = 0;
   }
 
   // Receive and/or transmit data
-#if INCLUDE_DEBUG_STATEMENTS
-  //log_info("m_aci_spi_transfer invoked control loop\r\n");
-#endif
   m_aci_spi_transfer(&data_to_send, &received_data);
 
   /* If there are messages to transmit, and we can store the reply, we request a new transfer */
@@ -240,11 +231,6 @@ static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * r
 
   m_aci_reqn_enable();
 
-#if INCLUDE_DEBUG_STATEMENTS
-  printf("data_to_send->buffer[0] = %02x\r\n", data_to_send->buffer[0]);
-  printf("data_to_send->buffer[1] = %02x\r\n", data_to_send->buffer[1]);
-#endif
-
   // Send length, receive header
   byte_sent_cnt = 0;
   received_data->status_byte = spi_readwrite(data_to_send->buffer[byte_sent_cnt++]);
@@ -267,20 +253,11 @@ static bool m_aci_spi_transfer(hal_aci_data_t * data_to_send, hal_aci_data_t * r
     max_bytes = HAL_ACI_MAX_LENGTH;
   }
 
-#if INCLUDE_DEBUG_STATEMENTS
-  //printf("m_aci_spi_transfer, max_bytes = %d\r\n", max_bytes);
-#endif
   // Transmit/receive the rest of the packet
   for (byte_cnt = 0; byte_cnt < max_bytes; byte_cnt++)
   {
-#if INCLUDE_DEBUG_STATEMENTS
-    //printf("%x:", data_to_send->buffer[byte_sent_cnt]);
-#endif
     received_data->buffer[byte_cnt+1] =  spi_readwrite(data_to_send->buffer[byte_sent_cnt++]);
   }
-#if INCLUDE_DEBUG_STATEMENTS
-  //printf("\r\n");
-#endif
 
   // RDYN should follow the REQN line in approx 100ns
   m_aci_reqn_disable();
@@ -312,9 +289,6 @@ void hal_aci_tl_pin_reset(void)
         }
         else
         {
-#if INCLUDE_DEBUG_STATEMENTS
-            log_info("attempting reset toggle\r\n");
-#endif
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
             digitalWrite(a_pins_local_ptr->reset_pin, 0);
             digitalWrite(a_pins_local_ptr->reset_pin, 1);
@@ -503,9 +477,6 @@ static uint8_t spi_readwrite(const uint8_t aci_byte)
 #elif defined(__arm__)
   uint8_t ret_byte = 0;
   transmit_SPI_byte(aci_byte, &ret_byte);
-#if INCLUDE_DEBUG_STATEMENTS
-  //log_info("transmit_SPI with write = %x, read = %x\r\n", send_byte, ret_byte);
-#endif
     return ret_byte;
 #endif
 }

@@ -22,9 +22,6 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
-#if INCLUDE_DEBUG_STATEMENTS
-#include <debug.h>
-#endif
 #include <lib_aci.h>
 #include "aci_setup.h"
 
@@ -70,16 +67,6 @@ static bool aci_setup_fill(aci_state_t *aci_stat, uint8_t *num_cmd_offset)
 		memcpy(&msg_to_send, &(aci_stat->aci_setup_info.setup_msgs[*num_cmd_offset]),
 				  (aci_stat->aci_setup_info.setup_msgs[*num_cmd_offset].buffer[0]+2));
   #endif
-
-#if INCLUDE_DEBUG_STATEMENTS
-    log_info("aci_setup_fill hal_aci_tl_send\r\n");
-    printf("msg_to_send.status_byte = %02X\r\n", msg_to_send.status_byte);
-
-    for (int i = 0; i < HAL_ACI_MAX_LENGTH; i++) {
-        printf("%02x:", msg_to_send.buffer[i]);
-    }
-    printf("\r\n");
-#endif
 
     //Put the Setup ACI message in the command queue
     if (!hal_aci_tl_send(&msg_to_send))
